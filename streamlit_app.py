@@ -166,7 +166,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # API Configuration
-API_BASE_URL = "http://127.0.0.1:8001"
+# Prefer Streamlit secrets, then environment, else local dev
+API_BASE_URL = st.secrets.get("API_BASE_URL", os.getenv("API_BASE_URL", "http://127.0.0.1:8001"))
 
 def check_api_health():
     """Check if the API is running"""
@@ -254,7 +255,10 @@ def main():
             st.success("✅ API Connected")
         else:
             st.error("❌ API Offline")
-            st.info("Start the server:\n```bash\npython -m uvicorn server:app --reload --host 127.0.0.1 --port 8001\n```")
+            if st.secrets.get("API_BASE_URL") or os.getenv("API_BASE_URL"):
+                st.info("API Base URL is set. If offline, check the backend deployment status.")
+            else:
+                st.info("Set `API_BASE_URL` in Streamlit Secrets to your deployed backend URL (e.g., https://your-api.onrender.com). For local dev use:\n```bash\npython -m uvicorn server:app --reload --host 127.0.0.1 --port 8001\n```")
         
         st.markdown("---")
 
