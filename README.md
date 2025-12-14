@@ -1,3 +1,6 @@
+<img width="1153" height="390" alt="App Logo" src="https://github.com/user-attachments/assets/24bda8fd-09f3-4ffa-b0bd-cd277c9a1419" />
+
+**App 1st Page:**--
 <img width="1920" height="1024" alt="App page main" src="https://github.com/user-attachments/assets/dec82e9c-79ed-46be-849f-c8b7aa6285d4" />
 
 **App Live Demo:** :--
@@ -476,3 +479,4 @@ This project is licensed under <a href="./LICENSE">MIT</a>. <img width=2300/>
 </div>
 
 ---
+
