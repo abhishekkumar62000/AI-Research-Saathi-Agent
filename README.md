@@ -1,224 +1,328 @@
-# AI Researcher Agent Pro 🔬 🤖
+<img width="1920" height="1024" alt="App page main" src="https://github.com/user-attachments/assets/dec82e9c-79ed-46be-849f-c8b7aa6285d4" />
 
-An intelligent, **AI-powered** research assistant that searches, analyzes, and summarizes academic papers from arXiv with cutting-edge AI capabilities.
+**App Live Demo:** :--
 
-## 🌟 Features
+https://github.com/user-attachments/assets/ef5f35fc-e42a-40b1-8f05-c3fb26a35afd
 
-### 🤖 AI-Powered Features (NEW!)
-- **AI Paper Summarization** - Generate comprehensive summaries in seconds
-- **Interactive Chat with Papers** - Ask questions and get intelligent answers
-- **Key Insights Extraction** - Get structured insights automatically
-- **Multi-Provider AI Support** - Choose from Groq (FREE!), OpenAI, Gemini, or Claude
 
-### 🎨 Core Features
-- **Beautiful Streamlit Web Interface** - Modern, interactive web UI with gradient themes
-- **FastAPI REST API** - Modern, fast web API with automatic documentation
-- **arXiv Integration** - Search and retrieve academic papers from arXiv
-- **CLI Tool** - Command-line interface for quick searches
-- **Auto-generated Documentation** - Interactive Swagger UI at `/docs`
-- **LangChain Integration** - Built using LangChain tools framework
-- **📊 Search Statistics** - Track your searches, papers, and AI summaries
-- **📥 Export Options** - Download results, summaries as JSON, TXT, or Markdown
+# 🔬 AI Researcher Agent / AI Research Saathi Agent 🤖
 
-## 🚀 Quick Start
+> **Discover cutting‑edge research papers from arXiv with the power of AI**
 
-### Prerequisites
+🚀 **Live App:** [https://ai-research-saathi-agent.streamlit.app/](https://ai-research-saathi-agent.streamlit.app/)
 
-- Python 3.13+
-- pip or uv package manager
+---
 
-### Installation
+## 📌 Project Announcement
 
-1. Clone or navigate to the repository:
-```bash
-cd "AI Researcher Agent"
+🎉 **Today I built a new end‑to‑end AI project – *AI Researcher Agent (AI Research Saathi Agent)***.
+
+This project is an **AI‑powered research assistant** designed for students, researchers, and AI enthusiasts. It helps users **search, analyze, summarize, and interact with research papers from arXiv** using both **offline AI logic** and **multiple LLM providers**.
+
+The app follows a **production‑grade architecture** with a FastAPI backend and a Streamlit frontend, deployed independently and connected via secure APIs.
+
+---
+
+## 🎯 Purpose & Vision
+
+Research papers are powerful but time‑consuming to read. This app aims to:
+
+* 🔍 Quickly **search relevant arXiv papers** by topic
+* 🧠 Provide **AI‑generated summaries & key insights**
+* 💬 Enable **chat‑based Q&A** on individual papers
+* 👶 Support **ELI5 (Explain Like I’m 5)** explanations
+* 🔌 Work **offline** or with **multiple LLM providers**
+* 📚 Help users **build reading lists & alerts**
+
+The goal is to act as a **personal AI research companion**.
+
+---
+
+## 🧱 High‑Level Architecture
+
+```
+[ Streamlit Frontend ]  →  [ FastAPI Backend ]  →  [ arXiv API ]
+           |                     |
+           |                     └─ AI Services (Offline / OpenAI / Groq / Anthropic / Gemini)
+           |
+           └─ UI, Filters, Chat, Summaries, Reading List
 ```
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
+### 🔹 Frontend
+
+* **Streamlit (streamlit_app.py)**
+* Deployed on **Streamlit Cloud**
+
+### 🔹 Backend
+
+* **FastAPI (server.py)**
+* Deployed on **Render**
+
+---
+
+## ⚙️ Core Components Explained
+
+### 1️⃣ FastAPI Backend (`server.py`)
+
+The backend exposes clean REST APIs consumed by the Streamlit frontend.
+
+#### 🔗 Available Endpoints
+
+* **`GET /health`**
+  Health check endpoint to verify backend availability.
+
+* **`GET /search`**
+  Searches arXiv using a topic query and returns parsed paper entries.
+
+* **`POST /summarize`**
+  Generates AI summaries of papers.
+
+  * Modes: `default`, `eli5`
+  * Providers: `offline`, `openai`, `groq`, `anthropic`, `gemini`
+
+* **`POST /chat`**
+  Chat with a research paper using its abstract/context.
+
+  * Maintains conversation history (client‑side)
+
+The backend uses **LangChain tool wrappers** for structured integration.
+
+---
+
+### 2️⃣ arXiv Integration (`arxiv_tool.py`)
+
+This module handles all arXiv interactions.
+
+#### 🔍 Search Flow
+
+* Normalizes keywords (`AND`, `OR`, `NOT`)
+* Builds arXiv Atom API query
+* Fetches XML response
+* Parses and extracts:
+
+  * Title
+  * Abstract
+  * Authors
+  * Categories
+  * PDF link
+  * Published & updated dates
+
+#### 🧰 LangChain Tool
+
+```python
+@tool
+def arxiv_search(topic):
+    return {"entries": [...]}
 ```
 
-Or if using uv:
-```bash
-uv sync
+This allows future agent‑based extensions.
+
+---
+
+### 3️⃣ AI Services Layer (`ai_services.py`)
+
+This is the **brain of the application**.
+
+#### 📴 Offline AI (No API Key Required)
+
+* **Summarization**
+
+  * Sentence splitting
+  * Token frequency scoring
+  * Top‑sentence extraction
+  * Key insight heuristics
+
+* **ELI5 Mode**
+
+  * Simplifies vocabulary
+  * Shortens long sentences
+
+* **Offline Chat**
+
+  * Finds sentences with highest keyword overlap
+  * Context‑aware responses
+
+#### 🌐 Online LLM Providers (Optional)
+
+If API keys are available, the app seamlessly switches to:
+
+* OpenAI
+* Groq
+* Anthropic
+* Google Gemini
+
+All LLM responses are **normalized** into:
+
+```json
+{
+  "summary": "...",
+  "key_insights": ["..."],
+  "bullets": ["..."]
+}
 ```
 
-### Running the Application
+Fallback logic ensures the app **always works**, even offline.
 
-#### Option 1: Streamlit Web Interface (Recommended) 🎨
+---
 
-The easiest way to use the AI Researcher Agent is through the beautiful Streamlit web interface.
+### 4️⃣ Streamlit Frontend (`streamlit_app.py`)
 
-**Step 1:** Start the FastAPI backend server (required):
+The frontend provides a **polished, interactive research UI**.
+
+#### 🧭 Sidebar Features
+
+* Backend health check
+* Provider selection (offline / LLMs)
+* ELI5 toggle
+* Temperature slider (UI‑only)
+* Runtime API key input
+* Max results selector
+* Popular topic buttons
+* Alerts & Reading List (persisted in `alerts_store.json`)
+* Advanced filters:
+
+  * Date range
+  * Author keyword
+  * Categories
+  * Sorting
+
+#### 🖥️ Main Interface
+
+* Search input → calls `/search`
+* Results rendered as **paper cards**
+* Client‑side filtering & sorting
+
+Each paper supports:
+
+* 🧠 **AI Summary** → `/summarize`
+* 💬 **Chat with Paper** → `/chat`
+* 📥 **Save to Reading List**
+* 📄 **PDF Link**
+
+#### ✨ Extra Features
+
+* Streaming word‑by‑word chat rendering
+* JSON & TXT export of results
+* Personalized recommendations (keyword overlap)
+* Side‑by‑side paper comparison
+* Welcome cards & feature highlights
+* Footer with developer credit
+
+---
+
+### 5️⃣ CLI Tool (`ai_researcher.py`)
+
+A lightweight command‑line interface to search arXiv directly.
+
+```bash
+python ai_researcher.py "transformer models" --max-results 5
+```
+
+Outputs clean, formatted JSON in the terminal.
+
+---
+
+### 6️⃣ Testing (`test_api.py`)
+
+Simple automated checks using `requests`:
+
+* `/health`
+* `/search` with sample topics
+
+Ensures backend reliability.
+
+---
+
+## 🗂️ Data Models
+
+### 📄 Paper Entry
+
+```json
+{
+  "title": "...",
+  "summary": "...",
+  "authors": ["..."],
+  "categories": ["..."],
+  "pdf": "...",
+  "published": "...",
+  "updated": "..."
+}
+```
+
+### 🧠 Summarization Response
+
+```json
+{
+  "summary": "...",
+  "key_insights": ["..."],
+  "bullets": ["..."]
+}
+```
+
+### 💬 Chat Response
+
+```json
+{
+  "answer": "..."
+}
+```
+
+---
+
+## ▶️ Running Locally
+
+### Backend
+
 ```bash
 python -m uvicorn server:app --reload --host 127.0.0.1 --port 8001
 ```
 
-**Step 2:** In a new terminal, start the Streamlit app:
+### Frontend
+
 ```bash
 streamlit run streamlit_app.py
 ```
 
-The Streamlit app will open automatically in your browser at:
-- **Streamlit UI**: http://localhost:8501
+### Test APIs
 
-**Features:**
-- 🎨 Beautiful gradient-themed interface
-- 🔍 Interactive search with real-time results
-- 📊 Search statistics tracking
-- 🔥 Popular topics quick access
-- 📥 Export results as JSON or TXT
-- 📱 Responsive design
-
-#### Option 2: FastAPI Web Server (API Only)
-
-Start the server:
-```bash
-python -m uvicorn server:app --reload --host 127.0.0.1 --port 8001
-```
-
-The API will be available at:
-- **API Base**: http://127.0.0.1:8001
-- **Interactive Docs**: http://127.0.0.1:8001/docs
-- **Alternative Docs**: http://127.0.0.1:8001/redoc
-
-#### Option 2: Command Line Interface
-
-Search directly from the command line:
-```bash
-python ai_researcher.py "machine learning" --max-results 5
-```
-
-## 📚 API Endpoints
-
-### GET /health
-Health check endpoint to verify the server is running.
-
-**Response:**
-```json
-{
-  "status": "ok"
-}
-```
-
-### GET /search
-Search for academic papers on arXiv.
-
-**Parameters:**
-- `topic` (required): The research topic to search for
-- `max_results` (optional): Maximum number of results to return (default: 5, max: 50)
-
-**Example Request:**
-```bash
-curl "http://127.0.0.1:8001/search?topic=quantum+computing&max_results=3"
-```
-
-**Example Response:**
-```json
-{
-  "entries": [
-    {
-      "title": "Quantum Computing: A Gentle Introduction",
-      "summary": "This paper provides an introduction to quantum computing...",
-      "authors": ["John Doe", "Jane Smith"],
-      "categories": ["quant-ph", "cs.ET"],
-      "pdf": "https://arxiv.org/pdf/2301.12345v1"
-    }
-  ]
-}
-```
-
-## 🧪 Testing
-
-Run the test script to verify all endpoints:
 ```bash
 python test_api.py
 ```
 
-This will test:
-- Health endpoint
-- Search endpoint with multiple topics
+---
 
-## 📁 Project Structure
+## 📦 Tech Stack
 
-```
-AI Researcher Agent/
-├── server.py           # FastAPI application
-├── ai_researcher.py    # CLI tool
-├── arxiv_tool.py       # arXiv search functionality
-├── test_api.py         # API testing script
-├── pyproject.toml      # Project dependencies
-└── README.md           # This file
-```
-
-## 🛠️ Technology Stack
-
-- **FastAPI** - Modern web framework for building APIs
-- **LangChain** - Framework for developing LLM applications
-- **Requests** - HTTP library for API calls
-- **Uvicorn** - ASGI server for running FastAPI
-- **arXiv API** - Academic paper database
-
-## 🔧 Development
-
-The server runs in development mode with auto-reload enabled. Any changes to the code will automatically restart the server.
-
-### Key Components
-
-1. **arxiv_tool.py**: Core functionality for searching arXiv
-   - `search_arxiv_papers()`: Queries the arXiv API
-   - `parse_arxiv_xml()`: Parses XML responses
-   - `arxiv_search`: LangChain tool wrapper
-
-2. **server.py**: FastAPI application
-   - Health check endpoint
-   - Search endpoint with validation
-
-3. **ai_researcher.py**: CLI interface
-   - Argument parsing
-   - Pretty-printed JSON output
-
-## 📝 Example Usage
-
-### Python Script
-```python
-import requests
-
-response = requests.get(
-    "http://127.0.0.1:8001/search",
-    params={"topic": "neural networks", "max_results": 3}
-)
-
-papers = response.json()["entries"]
-for paper in papers:
-    print(f"Title: {paper['title']}")
-    print(f"PDF: {paper['pdf']}\n")
-```
-
-### Command Line
-```bash
-# Search for papers about deep learning
-python ai_researcher.py "deep learning" --max-results 10
-
-# Search for papers about reinforcement learning
-python ai_researcher.py "reinforcement learning"
-```
-
-## 🐛 Bug Fixes
-
-- ✅ Fixed space character handling in search queries
-- ✅ Proper URL encoding for arXiv API requests
-- ✅ Validation error handling
-
-## 📄 License
-
-This project is open source and available for educational purposes.
-
-## 🤝 Contributing
-
-Feel free to submit issues and enhancement requests!
+* Python
+* FastAPI
+* Streamlit
+* Uvicorn
+* Requests
+* LangChain (tool abstraction)
+* arXiv API
+* Optional LLM SDKs (OpenAI, Groq, Anthropic, Gemini)
 
 ---
 
-**Built with ❤️ using FastAPI and LangChain**
+## 🌟 Why This Project Matters
+
+This project demonstrates:
+
+* ✅ Real‑world **frontend–backend separation**
+* ✅ API‑driven AI architecture
+* ✅ Graceful offline → online AI fallback
+* ✅ Clean modular design
+* ✅ Production deployment (Render + Streamlit Cloud)
+
+It’s not just a demo — it’s a **scalable AI research platform**.
+
+---
+
+## 👨‍💻 Developer
+
+**Abhishek Kumar (Abhi Yadav)**
+AI & Data Science Aspirant | Building practical AI products
+
+---
+
+⭐ If you like this project, don’t forget to **star the repo** and share feedback!
